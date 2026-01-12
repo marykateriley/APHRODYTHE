@@ -9,7 +9,7 @@
 # Mary-Kate Riley 04-11-25                               #
 ##########################################################
 
-setwd("/Users/mary-kateriley/Library/CloudStorage/OneDrive-Queen'sUniversityBelfast/Data Analysis/HNC/Basal PDX/Reanalysis Basal '24")
+setwd("")
 
 # Clean environment
 rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
