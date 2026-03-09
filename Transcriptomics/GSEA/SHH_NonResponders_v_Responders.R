@@ -1,5 +1,5 @@
 ##########################################################
-# SHH Gene Enrichment: GSEA and ORA                      #             
+# SHH Gene Enrichment: GSEA                              #             
 # Graft Treatment                                        #
 #                                                        #
 # Use DESeq result for preranked GSEA for gene sets:     #
@@ -45,18 +45,6 @@ SHH <- read.csv("./0_data/GMT/SHH/Curated_SHH_GMT.csv", row.names = 1)
 # Read DESeq results
 DESeq_results <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DESeq2_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1) 
 DESeq_results <- DESeq_results[!is.na(DESeq_results$padj),] # remove NA values for padj
-
-########################################################## READ DATA FOR ORA ##########################################################
-# Read DEG DESeq2 results
-DEG_results <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DEG_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1) 
-DEG_results <- DEG_results[!is.na(DEG_results$padj),] # remove NA values for padj
-vsd <- readRDS("./2_pipelines/DESeq2/Filtered/Response/NRvR/vsd.RData")
-
-DEG_results_up <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DEG_UP_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1) 
-DEG_results_up <- DEG_results_up[!is.na(DEG_results_up$padj),] # remove NA values for padj
-
-DEG_results_down <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DEG_DOWN_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1) 
-DEG_results_down <- DEG_results_down[!is.na(DEG_results_down$padj),] # remove NA values for padj
 
 ########################################################## SET VARIABLES ##########################################################
 
@@ -117,72 +105,3 @@ ggplot(gseaRes_df, aes(x = reorder(Description, NES), y = NES, fill = p.adjust <
 dev.off()
 
 
-
-########################################################## CURATE ORA GENE LIST ##########################################################
-
-# Get gene names from sig DEG results 
-gene_symbols = rownames(DEG_results)
-gene_symbols_up = rownames(DEG_results_up)
-gene_symbols_down = rownames(DEG_results_down)
-
-# Convert gene symbols to Entrez IDs.
-gene_entrez <- mapIds(org.Hs.eg.db, keys = gene_symbols, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
-gene_entrez_up <- mapIds(org.Hs.eg.db, keys = gene_symbols_up, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
-gene_entrez_down <- mapIds(org.Hs.eg.db, keys = gene_symbols_down, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
-
-
-########################################################## ORA ##########################################################
-
-ora_results <- enricher(gene = gene_symbols,
-                        TERM2GENE = SHH,
-                        pAdjustMethod = "BH",
-                        pvalueCutoff = 1,
-                        qvalueCutoff = 1)
-
-# Visualize ORA results
-pdf(file = paste0(output,name,"_ORA_DotPlot.pdf"), width = 10, height = 10)
-dotplot(ora_results, showCategory = 20,
-        title = paste0("ORA All DEGs: ", title))
-dev.off()
-
-pdf(file = paste0(output,name,"_ORA_BarPlot.pdf"), width = 10, height = 10)
-barplot(ora_results, showCategory = 20,
-        title = paste0("ORA All DEGs: ", title))
-dev.off()
-
-
-
-ora_results_up <- enricher(gene = gene_symbols_up,
-                           TERM2GENE = SHH,
-                           pAdjustMethod = "BH",
-                           pvalueCutoff = 1,
-                           qvalueCutoff = 1)
-
-# Visualize ORA results
-pdf(file = paste0(output,name,"_ORA_Up_DotPlot.pdf"), width = 10, height = 10)
-dotplot(ora_results_up, showCategory = 20,
-        title = paste0("ORA Up DEGs: ", title))
-dev.off()
-
-pdf(file = paste0(output,name,"_ORA_Up_BarPlot.pdf"), width = 10, height = 10)
-barplot(ora_results_up, showCategory = 20,
-        title = paste0("ORA Up DEGs: ", title))
-dev.off()
-
-
-ora_results_down <- enricher(gene = gene_symbols_down,
-                             TERM2GENE = SHH,
-                             pAdjustMethod = "BH",
-                             pvalueCutoff = 1,
-                             qvalueCutoff = 1)
-
-# Visualize ORA results
-pdf(file = paste0(output,name,"_ORA_Down_DotPlot.pdf"), width = 10, height = 10)
-dotplot(ora_results_down, showCategory = 20,
-        title = paste0("ORA Down DEGs: ", title))
-dev.off()
-
-pdf(file = paste0(output,name,"_ORA_Down_BarPlot.pdf"), width = 10, height = 10)
-barplot(ora_results_down, showCategory = 20,
-        title = paste0("ORA Down DEGs: ", title))
-dev.off()
