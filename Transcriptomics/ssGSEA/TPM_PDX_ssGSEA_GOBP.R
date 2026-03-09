@@ -32,8 +32,7 @@ library(ComplexHeatmap)
 library(RColorBrewer)
 library(circlize)
 library(ggplot2)
-library(reshape2) # Melting the data frame for ggplot2
-
+library(reshape2)
 library(ggExtra)
 library(ggpubr)
 library(rstatix) # t-test
@@ -159,7 +158,6 @@ sig_sets_krt <- ssgsea_stats_krt %>%
   dplyr::pull(GeneSet) %>%
   unique()
 
-# long_ssgsea came from your earlier code
 long_sig_krt <- long_ssgsea %>% dplyr::filter(GeneSet %in% sig_sets_krt)
 
 
@@ -180,7 +178,7 @@ annotation_df <- data.frame(
   check.names = FALSE)
 
 
-# continuous mapper for % change
+# continuous % change
 pal <- rev(RColorBrewer::brewer.pal(11, "PRGn"))
 pct_col_fun <- circlize::colorRamp2(c(-90, 0, 335), c(pal[2], pal[6], pal[10]))
 
