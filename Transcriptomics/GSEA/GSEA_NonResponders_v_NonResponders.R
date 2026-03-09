@@ -1,5 +1,5 @@
 ##########################################################
-# GSEA: Hallmarks, GO, KEGG gene sets                    #             
+# GSEA: Hallmarks, GO gene sets                          #             
 # Graft Treatment                                        #
 #                                                        #
 # Use DESeq result for preranked GSEA for gene sets:     #
@@ -70,14 +70,6 @@ view(geneList)
 H_t2g <- msigdbr(species = "Homo sapiens", category = "H") %>% 
   dplyr::select(gs_name, gene_symbol)
 
-# Gather C6 (onogenic signature) gene sets
-c6_t2g <- msigdbr(species = "Homo sapiens", category = "C6") %>% 
-  dplyr::select(gs_name, gene_symbol)
-
-# Gather KEGG gene sets
-K_t2g <- msigdbr(species = "Homo sapiens", category = "C2") %>% 
-  dplyr::select(gs_name, gene_symbol)
-
 # Gather GO gene sets
 G_t2g <- msigdbr(species = "Homo sapiens", category = "C5") %>% 
   dplyr::select(gs_name, gene_symbol)
@@ -127,21 +119,6 @@ ggplot(gseaRes_df, aes(x = reorder(Description, NES), y = NES, fill = p.adjust <
 dev.off()
 
 
-## C6 (onogenic signature) ##
-c6_gseaResult <-GSEA(geneList, exponent = 1, pvalueCutoff = 1,
-                     pAdjustMethod = "BH", TERM2GENE = c6_t2g, verbose = TRUE, seed = TRUE) #can set seed=True or just run once and save result for further plots! 
-c6_gseaRes_df <- as.data.frame(c6_gseaResult) #save results as df
-
-# save results
-write.csv(c6_gseaRes_df, file=paste0(pipelines,name,"_C6.csv"))
-
-# Ridgeplot
-pdf(file = paste0(output,name,"_C6_RidgePlot.pdf"), width = 13, height = 13)
-ridgeplot(c6_gseaResult)
-dev.off()
-
-
-
 ############### GO ###############
 
 
@@ -168,50 +145,5 @@ plot <- enrichplot::dotplot(gse,
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 14))
 ggsave(file = paste0(output,name,"_GO.pdf"), plot, width = 15, height = 13)
-
-
-
-############### KEGG ###############
-
-original_gene_list = DESeq_results[,4]
-## adding the genenames from DESeq results
-names(original_gene_list) = as.character(rownames(DESeq_results))
-
-# Convert gene symbols to ENTREZ IDs
-ids <- bitr(names(original_gene_list), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = org.Hs.eg.db)
-
-# Remove duplicate IDs
-dedup_ids <- ids[!duplicated(ids[c("SYMBOL")]),]
-# Ensure that rownames are converted to a column in DESeq_results
-DESeq_results$SYMBOL <- rownames(DESeq_results)
-
-# New df2 containing genes successfully mapped
-df2 <- DESeq_results[DESeq_results$SYMBOL %in% dedup_ids$SYMBOL, ]
-
-# New column in df2 with the corresponding ENTREZ IDs
-df2$ENTREZID <- dedup_ids$ENTREZID
-
-# Vector
-kegg_gene_list <- df2$stat
-
-# Name vector with ENTREZ ids
-names(kegg_gene_list) <- df2$ENTREZID
-
-# Omit NA 
-kegg_gene_list<-na.omit(kegg_gene_list)
-
-
-# Sort descending
-kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE)
-
-kegg_enrichment <- gseKEGG(geneList = kegg_gene_list,
-                           organism = 'hsa',
-                           pvalueCutoff = 0.1,
-                           verbose = TRUE,
-                           pAdjustMethod = "BH")
-write.csv(gse, file=paste0(pipelines,name,"_KEGG.csv"))
-
-plot <- enrichplot::dotplot(kegg_enrichment, showCategory = 10, title = paste0("Enriched KEGG Pathways: ", title), split=".sign") + facet_grid(.~.sign)
-ggsave(file = paste0(output,name,"_KEGG.pdf"), plot, width = 11, height = 13)
 
 
