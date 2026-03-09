@@ -1,5 +1,5 @@
 ##########################################################
-# GSEA: Hallmarks, GO, KEGG gene sets                    #             
+# GSEA: Hallmarks, GO gene sets                          #             
 # Graft Treatment                                        #
 #                                                        #
 # Use DESeq result for preranked GSEA for gene sets:     #
