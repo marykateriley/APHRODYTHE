@@ -39,11 +39,6 @@ library(RColorBrewer)
 DESeq <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DESeq2_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T)
 DESeq[1:5,1:5] 
 
-GEX <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/Norm_counts_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1)
-
-
-colData <- read.csv("./0_data/DESeq2/PRX/Metadata/All_RemovedSamples_Unfiltered_GraftHNSCC_colData_240724.csv", header = T, row.names = 1)
-
 ########################################################## SET VARIABLES ##########################################################
 
 pipelines <- "./2_pipelines/TF_Activity/NRvR/"
