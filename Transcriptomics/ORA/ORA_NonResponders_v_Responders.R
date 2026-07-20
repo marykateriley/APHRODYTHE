@@ -39,9 +39,6 @@ set.seed(1234)
 ########################################################## READ DATA ##########################################################
 
 # Read DEG DESeq2 results, 
-DESeq_results <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DEG_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1) 
-DESeq_results <- DESeq_results[!is.na(DESeq_results$padj),] # remove NA values for padj
-
 DESeq_results_up <- read.csv("./2_pipelines/DESeq2/Filtered/Response/NRvR/DEG_UP_Definitive_Response_3_6wkNonResponder_v_Responder.csv", header = T, row.names = 1) 
 DESeq_results_up <- DESeq_results_up[!is.na(DESeq_results_up$padj),] # remove NA values for padj
 
@@ -62,12 +59,10 @@ dir.create(output, recursive = TRUE, showWarnings = FALSE)
 ########################################################## ORA using Cluster Profiler ##########################################################
 
 # Get gene names from sig DEG results 
-gene_symbols = rownames(DESeq_results)
 gene_symbols_up = rownames(DESeq_results_up)
 gene_symbols_down = rownames(DESeq_results_down)
 
 # Convert gene symbols to Entrez IDs.
-gene_entrez <- mapIds(org.Hs.eg.db, keys = gene_symbols, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
 gene_entrez_up <- mapIds(org.Hs.eg.db, keys = gene_symbols_up, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
 gene_entrez_down <- mapIds(org.Hs.eg.db, keys = gene_symbols_down, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
 
