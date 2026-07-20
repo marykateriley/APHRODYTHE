@@ -81,7 +81,7 @@ merged_data <- all_tresh_genes %>%
 merged_data$Tumor_Sample_Barcode <- substr(merged_data$Sample_ID, 6, 17)
 
 # Create list with all genes of interest
-all_genes_of_interest <- list(SHH, EGFR, KRT, reccurant_cna)
+all_genes_of_interest <- list(EGFR, reccurant_cna)
 all_genes_of_interest <- unlist(all_genes_of_interest)
 
 # Filter the merged data to only include the genes of interest
